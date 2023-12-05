@@ -1,0 +1,36 @@
+name: Prueba de Scripts Python
+
+on: [push]
+
+jobs:
+  prueba-scripts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v2
+
+    - name: Configurar Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r codigos/requirements.txt 
+
+    - name: Ejecutar pruebas
+      run: |
+        errores=0
+        for archivo in codigos/*.py; do
+          if ! python "$archivo"; then
+            echo "Error en $archivo"
+            errores=$((errores+1))
+          fi
+        done
+
+        if [ $errores -gt 0 ]; then
+          echo "Hubo errores en algunos scripts. Corrige los errores antes de hacer push."
+          exit 1
+        fi
