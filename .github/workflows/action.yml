@@ -20,15 +20,15 @@ jobs:
 
     - name: Ejecutar pruebas
       run: |
-        errores=0
+        errores=""
         for archivo in codigos/*.py; do
           if ! python "$archivo"; then
             echo "Error en $archivo"
-            errores=$((errores+1))
+            errores="$errores $archivo"
           fi
         done
 
-        if [ $errores -gt 0 ]; then
-          echo "Hubo errores en algunos scripts. Corrige los errores antes de hacer push."
+        if [ -n "$errores" ]; then
+          echo "Hubo errores en los siguientes scripts: $errores. Corrige los errores antes de hacer push."
           exit 1
         fi
